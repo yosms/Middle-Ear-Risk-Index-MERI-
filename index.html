@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Middle Ear Risk Index Calculator</title>
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 20px;
+    background: #f5f7fb;
+  }
+
+  h2 { margin-top: 0; }
+
+  .card {
+    background: white;
+    padding: 16px;
+    margin-bottom: 14px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  }
+
+  label {
+    display: block;
+    margin: 6px 0;
+    cursor: pointer;
+  }
+
+  .output {
+    font-size: 20px;
+    font-weight: bold;
+    background: #e9f0ff;
+    padding: 12px;
+    border-radius: 8px;
+  }
+
+  button {
+    padding: 10px 14px;
+    margin-top: 10px;
+    cursor: pointer;
+  }
+
+  .section-title {
+    font-weight: bold;
+    margin-top: 10px;
+  }
+
+  .small {
+    font-size: 12px;
+    color: #555;
+  }
+</style>
+</head>
+
+<body>
+
+<h2>Middle Ear Risk Index (2001)</h2>
+
+<div class="card">
+
+  <div class="section-title">Otorrhea (Bellucci)</div>
+  <label><input type="radio" name="otorrhea" value="0" checked> I — Dry (0)</label>
+  <label><input type="radio" name="otorrhea" value="1"> II — Occasionally wet (1)</label>
+  <label><input type="radio" name="otorrhea" value="2"> III — Persistently wet (2)</label>
+  <label><input type="radio" name="otorrhea" value="3"> IV — Wet, cleft palate (3)</label>
+
+</div>
+
+<div class="card">
+  <div class="section-title">Perforation</div>
+  <label><input type="radio" name="perforation" value="0" checked> None (0)</label>
+  <label><input type="radio" name="perforation" value="1"> Present (1)</label>
+</div>
+
+<div class="card">
+  <div class="section-title">Cholesteatoma</div>
+  <label><input type="radio" name="cholesteatoma" value="0" checked> None (0)</label>
+  <label><input type="radio" name="cholesteatoma" value="2"> Present (2)</label>
+</div>
+
+<div class="card">
+  <div class="section-title">Ossicular status (Austin/Kartush)</div>
+  <label><input type="radio" name="ossicles" value="0" checked> 0) M+ I+ S+ (0)</label>
+  <label><input type="radio" name="ossicles" value="1"> A) M+ S+ (1)</label>
+  <label><input type="radio" name="ossicles" value="2"> B) M+ S− (2)</label>
+  <label><input type="radio" name="ossicles" value="3"> C) M− S+ (3)</label>
+  <label><input type="radio" name="ossicles" value="4"> D) M− S− (4)</label>
+  <label><input type="radio" name="ossicles" value="2e"> E) Ossicular head fixation (2)</label>
+  <label><input type="radio" name="ossicles" value="3f"> F) Stapes fixation (3)</label>
+</div>
+
+<div class="card">
+  <div class="section-title">Middle ear: granulations / effusion</div>
+  <label><input type="radio" name="middle" value="0" checked> No (0)</label>
+  <label><input type="radio" name="middle" value="2"> Yes (2)</label>
+</div>
+
+<div class="card">
+  <div class="section-title">Previous surgery</div>
+  <label><input type="radio" name="surgery" value="0" checked> None (0)</label>
+  <label><input type="radio" name="surgery" value="1"> Staged (1)</label>
+  <label><input type="radio" name="surgery" value="2"> Revision (2)</label>
+</div>
+
+<div class="card">
+  <div class="section-title">Smoker</div>
+  <label><input type="radio" name="smoker" value="0" checked> No (0)</label>
+  <label><input type="radio" name="smoker" value="2"> Yes (2)</label>
+</div>
+
+<div class="card">
+  <h3>Result</h3>
+  <div id="output" class="output">—</div>
+  <div id="grade" class="output" style="margin-top:10px;">—</div>
+  <button onclick="copyResult()">Copy to clipboard</button>
+</div>
+
+<script>
+function getVal(name) {
+  const el = document.querySelector(`input[name="${name}"]:checked`);
+  return parseInt(el.value.replace(/[a-z]/gi,'')) || 0;
+}
+
+function calculate() {
+  const total =
+    getVal("otorrhea") +
+    getVal("perforation") +
+    getVal("cholesteatoma") +
+    getVal("ossicles") +
+    getVal("middle") +
+    getVal("surgery") +
+    getVal("smoker");
+
+  let grade = "";
+  if (total <= 3) grade = "Mild (0–3)";
+  else if (total <= 6) grade = "Moderate (4–6)";
+  else grade = "Severe (7–12)";
+
+  document.getElementById("output").textContent = "Total MER Index: " + total;
+  document.getElementById("grade").textContent = "Severity: " + grade;
+
+  return `MER Index: ${total} — ${grade}`;
+}
+
+function copyResult() {
+  const text = calculate();
+  navigator.clipboard.writeText(text);
+}
+
+document.querySelectorAll("input").forEach(i => {
+  i.addEventListener("change", calculate);
+});
+
+calculate();
+</script>
+
+</body>
+</html>
